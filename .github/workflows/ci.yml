@@ -1,0 +1,63 @@
+# .github/workflows/ci.yml
+name: Basic CI Checks
+
+# Tetikleyiciler: Ne zaman çalışacak?
+on:
+  push: # Depoya kod gönderildiğinde
+    branches: [ main ] # Sadece 'main' branch'ine push edildiğinde (veya sizin ana branch isminiz, örn: master)
+  pull_request: # Pull request açıldığında/güncellendiğinde
+    branches: [ main ] # Hedef branch 'main' ise
+
+# İşler (Jobs): Workflow'da yapılacak işler
+jobs:
+  lint: # İşin adı (istediginiz bir isim olabilir)
+    name: Run Linter Checks # GitHub Actions UI'da görünecek isim
+    runs-on: ubuntu-latest # Hangi işletim sisteminde çalışacak (GitHub'ın sağladığı sanal makine)
+
+    steps: # İşin adımları
+      # Adım 1: Depodaki kodu runner'a kopyala
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      # Adım 2: Python ortamını kur
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # Dockerfile'daki ile aynı veya uyumlu bir sürüm kullanın
+
+      # Adım 3: Gerekli Python bağımlılıklarını kur
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 # flake8'i kur
+          # Veya geliştirme bağımlılıklarını kur:
+          # pip install -r requirements_dev.txt
+
+      # Adım 4: Flake8 ile kod kontrolü yap
+      - name: Lint with flake8
+        run: |
+          # Tüm Python dosyalarını kontrol et (.py uzantılı)
+          # --count: Hata sayısını göster
+          # --show-source: Hatalı kod satırını göster
+          # --statistics: İstatistikleri göster
+          # --exit-zero=False: Eğer hata bulunursa workflow'u başarısız yap (CI için önemli!)
+          # --max-line-length=88: Satır uzunluğu limiti (isteğe bağlı, Black formatlayıcısı ile uyumlu)
+          # --ignore=E501: Belirli hataları göz ardı et (isteğe bağlı, örn: satır uzunluğu)
+          flake8 . --count --show-source --statistics --exit-zero=False --max-line-length=88
+
+  # Gelecekte eklenecek test işi için yer tutucu:
+  # test:
+  #   name: Run Unit Tests
+  #   needs: lint # Lint işi başarılı olursa çalışsın
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install -r requirements.txt
+  #         pip install pytest # or from requirements_dev.txt
+  #     - name: Run tests
+  #       run: pytest tests/ # Testlerin 'tests/' klasöründe olduğunu varsayalım

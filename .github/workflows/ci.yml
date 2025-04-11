@@ -40,10 +40,9 @@ jobs:
           # --count: Hata sayısını göster
           # --show-source: Hatalı kod satırını göster
           # --statistics: İstatistikleri göster
-          # --exit-zero=False: Eğer hata bulunursa workflow'u başarısız yap (CI için önemli!)
           # --max-line-length=88: Satır uzunluğu limiti (isteğe bağlı, Black formatlayıcısı ile uyumlu)
           # --ignore=E501: Belirli hataları göz ardı et (isteğe bağlı, örn: satır uzunluğu)
-          flake8 . --count --show-source --statistics --exit-zero=False --max-line-length=88
+          flake8 . --count --show-source --statistics --max-line-length=88
 
   # Gelecekte eklenecek test işi için yer tutucu:
   # test:

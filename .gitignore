@@ -22,3 +22,8 @@ mlflow-artifacts:/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Data files
+data/
+# VEYA daha spesifik olarak:
+# data/raw/*.csv
